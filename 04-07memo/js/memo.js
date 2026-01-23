@@ -86,7 +86,7 @@ function selectTable() {
 
             const checked = checkedCheckboxes.length;
             if (checked >= 2) {
-                alert("test");
+                alert("一つ選んでくださいませ。");
                 return;
             }
 
@@ -118,22 +118,50 @@ function delLocalStorage() {
     del.addEventListener("click",
         function (e) {
             e.preventDefault();
-            let w_sel = 0;
-            w_sel = selectRadioBtn();
+            // let w_sel = 0;
+            // w_sel = selectRadioBtn();
 
-            // 値の入力チェック
-            if (w_sel === "1") {
-                const key = document.getElementById("textKey").value;
-                const value = document.getElementById("textMemo").value;
-                let w_confirm = confirm(`「${key}」と値「${value}」を削除しますか？`)
-                if (w_confirm) {
+            // // 値の入力チェック
+            // if (w_sel === "1") {
+            //     const key = document.getElementById("textKey").value;
+            //     const value = document.getElementById("textMemo").value;
+            //     let w_confirm = confirm(`「${key}」と値「${value}」を削除しますか？`)
+            //     if (w_confirm) {
+            //         localStorage.removeItem(key);
+            //         let w_msg = `LocalStorage から キー「${key}」と値「${value}」を削除しました。`;
+            //         window.alert(w_msg);
+            //         viewStorage();
+            //         document.getElementById("textKey").value = "";
+            //         document.getElementById("textMemo").value = "";
+            //     }
+            // }
+            const checkedCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            const checkedCount = checkedCheckboxes.length;
+
+            if (checkedCount === 0) {
+                window.alert("削除対象を一つ以上選んでください。");
+                return;
+            }
+            const keysToDelete = [];
+            checkedCheckboxes.forEach(checkbox => {
+                // Lấy ra hàng (<tr>) chứa checkbox
+                const row = checkbox.closest("tr");
+                // Lấy Key từ ô thứ 2 (cells[1]) vì checkbox ô 1
+                keysToDelete.push(row.cells[1].innerHTML); 
+            });
+            let w_confirm = confirm(`${checkedCount} 件のデータを削除しますか？`);
+
+            if (w_confirm) {
+                keysToDelete.forEach(key => {
                     localStorage.removeItem(key);
-                    let w_msg = `LocalStorage から キー「${key}」と値「${value}」を削除しました。`;
-                    window.alert(w_msg);
-                    viewStorage();
-                    document.getElementById("textKey").value = "";
-                    document.getElementById("textMemo").value = "";
-                }
+                });
+
+                let w_msg = `${checkedCount} 件のデータを LocalStorage から削除しました。`;
+                window.alert(w_msg);
+                
+                viewStorage();
+                document.getElementById("textKey").value = "";
+                document.getElementById("textMemo").value = "";
             }
         }, false
     );
